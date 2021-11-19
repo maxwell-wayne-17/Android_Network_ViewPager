@@ -30,7 +30,7 @@ public class DataVM extends ViewModel {
     private final String FILE = "file";
     // Will hold pet names as keys and their image file name as values
     // This will be utilized in the getImg call
-    private HashMap<String,String> petsAndImgs;
+    private HashMap<String,String> petsAndImgs = new HashMap<>();
     // Used for displaying error status code
     private int vMStatusCode;
 
@@ -74,9 +74,8 @@ public class DataVM extends ViewModel {
         Log.d(TAG, "getJSON result = " + getResult().toString());
     }
 
-    public List<String> setImgLinks(String jsonStr){
+    public HashMap<String, String> setImgLinks(String jsonStr){
         // Might not need this list, could just get keys from hashmap?
-        List<String> petNames = new ArrayList<>();
         petsAndImgs = new HashMap<>();
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);
@@ -88,7 +87,6 @@ public class DataVM extends ViewModel {
                 JSONObject pet = jsonArray.getJSONObject(i);
                 String name = (String) pet.get(NAME);
                 String file = (String) pet.get(FILE);
-                petNames.add(name);
                 petsAndImgs.put(name, file);
 
                 Log.d(TAG, "setImgLinks : " + name + " " + file);
@@ -96,8 +94,10 @@ public class DataVM extends ViewModel {
         }catch (Exception e) {
             Log.d(TAG, "setImgLinks : " + e.toString());
         }
-        return petNames;
+        return petsAndImgs;
     }
+
+    public HashMap<String, String> getPetsAndImgs(){ return petsAndImgs; }
 
     public String getPetImg(String petName){
         if (petsAndImgs.containsKey(petName)){
@@ -108,10 +108,10 @@ public class DataVM extends ViewModel {
         }
     }
 
-    public void getImage(String file){
+    public void getImage(String file, RecyclerViewAdapter.ImgViewHolder myVh, String name){
         String imgUrl = link + file;
         Log.d(TAG, "getImg link = " + imgUrl);
-        imgThread = new GetImageThread(imgUrl);
+        imgThread = new GetImageThread(imgUrl, myVh, name);
         imgThread.start();
     }
 
@@ -177,13 +177,24 @@ public class DataVM extends ViewModel {
 
     public class GetImageThread extends Thread{
         private static final String TAG = "GetImageThread";
+        private static final int    UNINITIALIZED = -1;
         private static final int    DEFAULT_BUFFER_SIZE = 50;
         private static final int    NO_DATA = -1;
         private static final int    TIME_OUT = 1000; // in milisec
         private int                 statusCode = 0;
         private String              url;
+        private String              imgName;
+        // Fields to track view holder
+        private RecyclerViewAdapter.ImgViewHolder myVh;
+        private int ogPosition = UNINITIALIZED;// Start uninitialized, will track if returned position matches
+                                        // the original, if it does not, just scrap the work
 
-        public GetImageThread(String url){ this.url = url; }
+        public GetImageThread(String url, RecyclerViewAdapter.ImgViewHolder myVh, String imgName){
+            this.url = url;
+            this.myVh = myVh;
+            ogPosition = myVh.getPos();
+            this.imgName = imgName;
+        }
 
         public void run(){
 
@@ -221,6 +232,14 @@ public class DataVM extends ViewModel {
                     // Convert to bitmap
                     byte[] imageData = baf.toByteArray();
                     // Can only postValue from background thread, not setValue
+                    Bitmap img = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                    if (this.myVh.getPos() == this.ogPosition){
+                        Log.d(TAG, "Trying to update viewhold UI directly");
+                        this.myVh.setUi(img, imgName);
+                    }
+                    else{
+                        Log.d(TAG, "Thread did false work, see if we can eliminate this");
+                    }
                     bmp.postValue(BitmapFactory.decodeByteArray(imageData, 0, imageData.length));
                     //result.postValue(url);
                 } finally {

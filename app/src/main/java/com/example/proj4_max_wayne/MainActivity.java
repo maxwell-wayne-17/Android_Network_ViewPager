@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.proj4_max_wayne.databinding.ActivityMainBinding;
 
@@ -28,6 +29,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,9 +38,11 @@ public class MainActivity extends AppCompatActivity {
     private DataVM myVM;
 
     private ConnectivityCheck myCheck;
+    private boolean setUpRecycler = false;
 
-    private ImageView iv;
-    private TextView tv;
+    // Set reference to viewpager
+    ViewPager2 vp;
+    RecyclerViewAdapter rva;
 
     // Preference variables
     private SharedPreferences myPreference;
@@ -48,11 +52,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Set reference to widgets
-//        iv = findViewById(R.id.image);
-//        tv = findViewById(R.id.imgName);
-//        tv.setText("On create");
 
         // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -81,6 +80,26 @@ public class MainActivity extends AppCompatActivity {
         myPreference.registerOnSharedPreferenceChangeListener(listener);
         myVM.getPrefValues(myPreference);
 
+        // Create the observer for JSON
+        final Observer<String> resultObserver = result -> {
+            // Update the UI
+            Log.d(TAG, "onChanged listener = " + result);
+//            myVM.setImgLinks(result);
+            handleResults(result);
+        };
+        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
+        myVM.getResult().observe(this,resultObserver);
+        myVM.getJSON();
+
+        // *** DOWNLOAD JSON FIRST, AND THEN DECIDE IF WE CAN CREATE ADAPTER ***
+//        // Get reference to viewpager
+//        vp = findViewById(R.id.recycler_view);
+//        // Create an instance of swipe adapter
+//        rva = new RecyclerViewAdapter(this, myVM);
+//        // Set viewpager to the adapter
+//        vp.setAdapter(rva);
+
+        // Try to replace this first with async task
         // Create observer to update UI image
         final Observer<Bitmap> bmpObserver = bitmap -> {
             // Update UI Image
@@ -89,28 +108,27 @@ public class MainActivity extends AppCompatActivity {
         // Observe the LiveData
         myVM.getbmp().observe(this, bmpObserver);
 
-        // Create the observer which updates the UI
-        final Observer<String> resultObserver = result -> {
-            // Update the UI
-            Log.d(TAG, "onChanged listener = " + result);
-            handleResults(result);
-        };
-        // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
-        myVM.getResult().observe(this,resultObserver);
-        myVM.getJSON();
     }
 
     private void handleResults(String result){
         // Test is json is valid through setImg links
         // if invalid, clear spinner, set scared cat background, set text
         // if valid, set up spinner
-        List<String> petNames = myVM.setImgLinks(result);
-        if (petNames.isEmpty()){
+        HashMap<String,String> petAndImgs = myVM.setImgLinks(result);
+        if (petAndImgs.isEmpty()){
             Log.d(TAG, "Handle results empty array");
             // Reset background
             //setErrorConnectionGUI(result);
         }
         else{
+            // Get reference to viewpager
+            vp = findViewById(R.id.recycler_view);
+            // Create an instance of swipe adapter
+            rva = new RecyclerViewAdapter(this, myVM, petAndImgs);
+            // Set viewpager to the adapter
+            vp.setAdapter(rva);
+
+
             Log.d(TAG, "Handle results not empty array");
         }
     }
