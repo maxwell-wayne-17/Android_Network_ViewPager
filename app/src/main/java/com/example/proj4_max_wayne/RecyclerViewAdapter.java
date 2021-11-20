@@ -45,8 +45,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
     class ImgViewHolder extends RecyclerView.ViewHolder {
         private static final int UNINITIALIZED = -1;
         private int position = UNINITIALIZED;
-        ImageView iv;
-        TextView tv;
+        private ImageView iv;
+        private TextView tv;
 
         public ImgViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -61,8 +61,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         public void setIv(Bitmap img){
             iv.setImageBitmap(img);
         }
+        public void setIvResource(int id){
+            iv.setImageResource(id);
+        }
         public void setTv(String name){
             tv.setText(name);
+        }
+        public void setTvResource(int id) {
+            tv.setText(id);
         }
     }
 
@@ -98,12 +104,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         else{
             Log.d(TAG, "onBindViewHolder: ERROR no pets");
             if ( !myCheck.isNetworkReachable() && !myCheck.isWiFiReachable() ){
-                viewHolder.iv.setImageResource(R.drawable.no_network);
-                viewHolder.tv.setText(R.string.no_connection_msg);
+                viewHolder.setIvResource( (R.drawable.no_network) );
+                viewHolder.setTvResource(R.string.no_connection_msg);
             }
             else {
                 int errorCode = myVm.getVmStatusCode();
-                viewHolder.tv.setText(String.format("Server returned %d", errorCode));
+                viewHolder.setIvResource( (R.drawable.sad_paper) );
+                viewHolder.setTv( String.format("Server returned %d", errorCode) );
             }
 
         }
