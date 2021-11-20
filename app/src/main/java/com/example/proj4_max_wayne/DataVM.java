@@ -18,9 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class DataVM extends ViewModel {
 
@@ -96,21 +94,10 @@ public class DataVM extends ViewModel {
         return petsAndImgs;
     }
 
-    public HashMap<String, String> getPetsAndImgs(){ return petsAndImgs; }
-
-    public String getPetImg(String petName){
-        if (petsAndImgs.containsKey(petName)){
-            return petsAndImgs.get(petName);
-        }
-        else{
-            return "ERROR - Pet name " + petName + " not in hashmap";
-        }
-    }
-
-    public void getImage(String file, RecyclerViewAdapter.ImgViewHolder myVh, String name){
+    public void getImage(String file, RecyclerViewAdapter.ImgViewHolder myVh){
         String imgUrl = link + file;
         Log.d(TAG, "getImg link = " + imgUrl);
-        imgThread = new GetImageThread(imgUrl, myVh, name);
+        imgThread = new GetImageThread(imgUrl, myVh);
         imgThread.start();
     }
 
@@ -180,19 +167,16 @@ public class DataVM extends ViewModel {
         private static final int    DEFAULT_BUFFER_SIZE = 50;
         private static final int    NO_DATA = -1;
         private static final int    TIME_OUT = 1000; // in milisec
-        private int                 statusCode = 0;
         private String              url;
-        private String              imgName;
         // Fields to track view holder
         private RecyclerViewAdapter.ImgViewHolder myVh;
         private int ogPosition = UNINITIALIZED;// Start uninitialized, will track if returned position matches
                                         // the original, if it does not, just scrap the work
 
-        public GetImageThread(String url, RecyclerViewAdapter.ImgViewHolder myVh, String imgName){
+        public GetImageThread(String url, RecyclerViewAdapter.ImgViewHolder myVh){
             this.url = url;
             this.myVh = myVh;
             ogPosition = myVh.getPos();
-            this.imgName = imgName;
         }
 
         public void run(){
@@ -231,7 +215,6 @@ public class DataVM extends ViewModel {
                     // Convert to bitmap
                     byte[] imageData = baf.toByteArray();
                     // Can only postValue from background thread, not setValue
-                    Bitmap img = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
                     if (myVh.getPos() == ogPosition){
                         Log.d(TAG, "Trying to update viewhold UI directly");
                         Bitmap pic = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);

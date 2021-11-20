@@ -21,8 +21,7 @@
         android:layout_gravity="center_horizontal|bottom"
         android:layout_width="wrap_content"
         android:layout_height="120dp"
-        android:background="#66777777"
-        android:text="Server returned 404">
+        android:background="@color/text_background">
 
     </TextView>
 

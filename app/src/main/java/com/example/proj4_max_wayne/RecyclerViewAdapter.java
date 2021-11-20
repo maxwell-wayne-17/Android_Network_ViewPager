@@ -93,7 +93,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             String imgName = petNames.get(position);
             String imgFile = petsAndImgs.get(imgName);
             viewHolder.setTv(imgName);
-            myVm.getImage(imgFile, viewHolder, imgName);
+            myVm.getImage(imgFile, viewHolder);
         }
         else{
             Log.d(TAG, "onBindViewHolder: ERROR no pets");

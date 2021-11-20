@@ -4,34 +4,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.util.Log;
-import android.view.View;
-
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.example.proj4_max_wayne.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
@@ -40,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     private DataVM myVM;
 
     private ConnectivityCheck myCheck;
-    private boolean setUpRecycler = false;
 
     // Set reference to viewpager
     private ViewPager2 vp;
