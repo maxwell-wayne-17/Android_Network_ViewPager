@@ -88,6 +88,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             iv.setImageBitmap(img);
             tv.setText(name);
         }
+
+        public void setIv(Bitmap img){
+            iv.setImageBitmap(img);
+        }
+        public void setTv(String name){
+            tv.setText(name);
+        }
     }
 
     // Hold off these methods
@@ -116,6 +123,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
             Log.d(TAG, "onBindViewHolder: we have pets");
             String imgName = petNames.get(position);
             String imgFile = petsAndImgs.get(imgName);
+            viewHolder.setTv(imgName);
             myVm.getImage(imgFile, viewHolder, imgName);
         }
         else{

@@ -45,8 +45,8 @@ public class DataVM extends ViewModel {
     GetTextThread txtThread;
 
     // Live data, bitmap we need
-    private MutableLiveData<Bitmap> bmp;
-    public MutableLiveData<Bitmap> getbmp(){
+    private MutableLiveData<HashMap<Bitmap, RecyclerViewAdapter.ImgViewHolder>> bmp;
+    public MutableLiveData<HashMap<Bitmap, RecyclerViewAdapter.ImgViewHolder>> getbmp(){
         if (bmp == null){
             bmp = new MutableLiveData<>();
         }
@@ -234,12 +234,16 @@ public class DataVM extends ViewModel {
                     Bitmap img = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
                     if (this.myVh.getPos() == this.ogPosition){
                         Log.d(TAG, "Trying to update viewhold UI directly");
-                        this.myVh.setUi(img, imgName);
+                        //this.myVh.setUi(img, imgName);
+                        Bitmap pic = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                        HashMap<Bitmap, RecyclerViewAdapter.ImgViewHolder> map = new HashMap<>();
+                        map.put(pic, myVh);
+                        bmp.postValue(map);
                     }
                     else{
                         Log.d(TAG, "Thread did false work, see if we can eliminate this");
                     }
-                    bmp.postValue(BitmapFactory.decodeByteArray(imageData, 0, imageData.length));
+
                     //result.postValue(url);
                 } finally {
                     // Close resources

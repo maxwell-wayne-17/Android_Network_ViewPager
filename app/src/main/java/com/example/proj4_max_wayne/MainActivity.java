@@ -31,6 +31,8 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = "MainAct";
@@ -103,9 +105,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Try to replace this first with async task
         // Create observer to update UI image
-        final Observer<Bitmap> bmpObserver = bitmap -> {
+        final Observer<HashMap<Bitmap, RecyclerViewAdapter.ImgViewHolder>> bmpObserver = map -> {
             // Update UI Image
             //imageViewAnimatedChange(getApplicationContext(), iv, bitmap);
+            Bitmap pic = map.keySet().stream().collect(Collectors.toList()).get(0);
+            RecyclerViewAdapter.ImgViewHolder tempVh = map.get(pic);
+            tempVh.setIv(pic);
         };
         // Observe the LiveData
         myVM.getbmp().observe(this, bmpObserver);
