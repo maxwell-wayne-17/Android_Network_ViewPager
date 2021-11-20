@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d(TAG, "On create test");
+
         // Set up toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -122,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             // Get reference to viewpager
-            vp = findViewById(R.id.recycler_view);
+            vp = findViewById(R.id.viewpager2);
             // Create an instance of swipe adapter
             rva = new RecyclerViewAdapter(this, myVM, petAndImgs);
             // Set viewpager to the adapter

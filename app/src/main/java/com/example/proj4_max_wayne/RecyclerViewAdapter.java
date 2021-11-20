@@ -35,6 +35,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         this.myVm = myVm;
         this.petsAndImgs = petsAndImgs;
         this.petNames = new ArrayList<>(petsAndImgs.keySet());
+        maxImgs = (petNames.size() > 0) ? petNames.size() : 1;
     }
 
     // Might not need to use
