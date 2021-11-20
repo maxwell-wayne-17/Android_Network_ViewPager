@@ -232,9 +232,8 @@ public class DataVM extends ViewModel {
                     byte[] imageData = baf.toByteArray();
                     // Can only postValue from background thread, not setValue
                     Bitmap img = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-                    if (this.myVh.getPos() == this.ogPosition){
+                    if (myVh.getPos() == ogPosition){
                         Log.d(TAG, "Trying to update viewhold UI directly");
-                        //this.myVh.setUi(img, imgName);
                         Bitmap pic = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
                         HashMap<Bitmap, RecyclerViewAdapter.ImgViewHolder> map = new HashMap<>();
                         map.put(pic, myVh);
@@ -243,7 +242,6 @@ public class DataVM extends ViewModel {
                     else{
                         Log.d(TAG, "Thread did false work, see if we can eliminate this");
                     }
-
                     //result.postValue(url);
                 } finally {
                     // Close resources

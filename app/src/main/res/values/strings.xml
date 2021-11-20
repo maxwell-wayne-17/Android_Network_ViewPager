@@ -15,4 +15,5 @@
     <string name="no_connection_msg">Error: no connection</string>
     <string name="default_msg">This contains the status message</string>
     <string name="default_code">default text</string>
+    <string name="initialize_msg">Initializing...</string>
 </resources>

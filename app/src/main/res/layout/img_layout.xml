@@ -15,14 +15,14 @@
 
     <TextView
         android:id="@+id/imgName"
-        android:textSize="60dp"
+        android:textSize="45dp"
         android:textStyle="bold"
         android:gravity="center"
         android:layout_gravity="center_horizontal|bottom"
         android:layout_width="wrap_content"
         android:layout_height="120dp"
-        android:background="#33777777"
-        android:text="Test Name">
+        android:background="#66777777"
+        android:text="Server returned 404">
 
     </TextView>
 

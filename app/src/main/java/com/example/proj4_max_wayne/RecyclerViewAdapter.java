@@ -21,23 +21,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
     private static final String TAG = "RCA_TAG";
     private static final int DEFAULT_MAX_IMGS = 15;
-    private LayoutInflater li;
-    private Context ctx;
+    private final LayoutInflater li;
     private int maxImgs;
     // Holds keys from petsAndImgs, will allow us to maintain consistent position
-    private ArrayList<String> petNames;
+    private final ArrayList<String> petNames;
     // Used to hold the link between pet names and their associated file name
-    private HashMap<String, String> petsAndImgs;
+    private final HashMap<String, String> petsAndImgs;
     private ArrayList<Bitmap> pics; // Will most likely not use
-    private DataVM myVm;
-    private ConnectivityCheck myCheck;
-
-    private final String URL_PREF_KEY = "url_preference";
-    private final String DEFAULT_URL = "https://www.pcs.cnu.edu/~kperkins/pets/";
-    private String link;
+    private final DataVM myVm;
+    private final ConnectivityCheck myCheck;
 
     public RecyclerViewAdapter(Context ctx, DataVM myVm, ConnectivityCheck myCheck, HashMap<String, String> petsAndImgs){
-        this.ctx = ctx;
         li = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.maxImgs = DEFAULT_MAX_IMGS;
         this.myVm = myVm;
@@ -47,26 +41,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         maxImgs = (petNames.size() > 0) ? petNames.size() : 1;
     }
 
-    // Might not need to use
-    public void setPetsAndImgs(HashMap<String, String> petsAndImgs){ this.petsAndImgs = petsAndImgs; }
-
-    // Might not need to use
-    public void addBitmap(Bitmap pic){
-        boolean newPic = true;
-        for( Bitmap img : pics){
-            if (img.sameAs(pic)){
-                newPic = false;
-            }
-        }
-        if (newPic){
-            pics.add(pic);
-        }
-    }
-
-    public void getPrefValues(SharedPreferences settings){
-        link = settings.getString(URL_PREF_KEY,DEFAULT_URL);
-        Log.d(TAG, link);
-    }
 
     class ImgViewHolder extends RecyclerView.ViewHolder {
         private static final int UNINITIALIZED = -1;
@@ -83,11 +57,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         public void setPos(int position){ this.position = position; }
 
         public int getPos(){ return position; }
-
-        public void setUi(Bitmap img, String name){
-            iv.setImageBitmap(img);
-            tv.setText(name);
-        }
 
         public void setIv(Bitmap img){
             iv.setImageBitmap(img);
@@ -115,7 +84,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
         // Initialize the UI
         viewHolder.iv.setImageResource(R.drawable.hourglass);
-        viewHolder.tv.setText("Initializing...");
+        viewHolder.tv.setText(R.string.initialize_msg);
 
         // Launch threads here to get image, should already have text
         // Get img info for thread

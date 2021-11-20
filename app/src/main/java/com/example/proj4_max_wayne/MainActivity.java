@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean setUpRecycler = false;
 
     // Set reference to viewpager
-    ViewPager2 vp;
-    RecyclerViewAdapter rva;
+    private ViewPager2 vp;
+    private RecyclerViewAdapter rva;
 
     // Preference variables
     private SharedPreferences myPreference;
@@ -88,26 +88,16 @@ public class MainActivity extends AppCompatActivity {
         final Observer<String> resultObserver = result -> {
             // Update the UI
             Log.d(TAG, "onChanged listener = " + result);
-//            myVM.setImgLinks(result);
             handleResults(result);
         };
         // Observe the LiveData, passing in this activity as the LifecycleOwner and the observer.
         myVM.getResult().observe(this,resultObserver);
         myVM.getJSON();
 
-        // *** DOWNLOAD JSON FIRST, AND THEN DECIDE IF WE CAN CREATE ADAPTER ***
-//        // Get reference to viewpager
-//        vp = findViewById(R.id.recycler_view);
-//        // Create an instance of swipe adapter
-//        rva = new RecyclerViewAdapter(this, myVM);
-//        // Set viewpager to the adapter
-//        vp.setAdapter(rva);
-
         // Try to replace this first with async task
         // Create observer to update UI image
         final Observer<HashMap<Bitmap, RecyclerViewAdapter.ImgViewHolder>> bmpObserver = map -> {
             // Update UI Image
-            //imageViewAnimatedChange(getApplicationContext(), iv, bitmap);
             Bitmap pic = map.keySet().stream().collect(Collectors.toList()).get(0);
             RecyclerViewAdapter.ImgViewHolder tempVh = map.get(pic);
             tempVh.setIv(pic);
@@ -118,26 +108,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleResults(String result){
-        // Test is json is valid through setImg links
-        // if invalid, clear spinner, set scared cat background, set text
-        // if valid, set up spinner
         HashMap<String,String> petsAndImgs = myVM.setImgLinks(result);
-        if (false && petsAndImgs.isEmpty()){
-            Log.d(TAG, "Handle results empty array");
-            // Reset background
-            //setErrorConnectionGUI(result);
-        }
-        else{
-            // Get reference to viewpager
-            vp = findViewById(R.id.viewpager2);
-            // Create an instance of swipe adapter
-            rva = new RecyclerViewAdapter(this, myVM, myCheck, petsAndImgs);
-            // Set viewpager to the adapter
-            vp.setAdapter(rva);
-
-
-            Log.d(TAG, "Is hash map empty " + petsAndImgs.isEmpty());
-        }
+        // Get reference to viewpager
+        vp = findViewById(R.id.viewpager2);
+        // Create an instance of swipe adapter
+        rva = new RecyclerViewAdapter(this, myVM, myCheck, petsAndImgs);
+        // Set viewpager to the adapter
+        vp.setAdapter(rva);
     }
 
     @Override
