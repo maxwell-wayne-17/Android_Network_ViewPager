@@ -116,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
         // Test is json is valid through setImg links
         // if invalid, clear spinner, set scared cat background, set text
         // if valid, set up spinner
-        HashMap<String,String> petAndImgs = myVM.setImgLinks(result);
-        if (petAndImgs.isEmpty()){
+        HashMap<String,String> petsAndImgs = myVM.setImgLinks(result);
+        if (false && petsAndImgs.isEmpty()){
             Log.d(TAG, "Handle results empty array");
             // Reset background
             //setErrorConnectionGUI(result);
@@ -126,12 +126,12 @@ public class MainActivity extends AppCompatActivity {
             // Get reference to viewpager
             vp = findViewById(R.id.viewpager2);
             // Create an instance of swipe adapter
-            rva = new RecyclerViewAdapter(this, myVM, petAndImgs);
+            rva = new RecyclerViewAdapter(this, myVM, myCheck, petsAndImgs);
             // Set viewpager to the adapter
             vp.setAdapter(rva);
 
 
-            Log.d(TAG, "Handle results not empty array");
+            Log.d(TAG, "Is hash map empty " + petsAndImgs.isEmpty());
         }
     }
 

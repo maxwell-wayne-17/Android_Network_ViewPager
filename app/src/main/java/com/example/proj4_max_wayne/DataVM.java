@@ -75,7 +75,6 @@ public class DataVM extends ViewModel {
     }
 
     public HashMap<String, String> setImgLinks(String jsonStr){
-        // Might not need this list, could just get keys from hashmap?
         petsAndImgs = new HashMap<>();
         try {
             JSONObject jsonObj = new JSONObject(jsonStr);

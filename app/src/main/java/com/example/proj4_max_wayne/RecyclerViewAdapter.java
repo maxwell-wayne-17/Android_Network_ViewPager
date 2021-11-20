@@ -1,8 +1,10 @@
 package com.example.proj4_max_wayne;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
+    private static final String TAG = "RCA_TAG";
     private static final int DEFAULT_MAX_IMGS = 15;
     private LayoutInflater li;
     private Context ctx;
@@ -27,12 +30,18 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
     private HashMap<String, String> petsAndImgs;
     private ArrayList<Bitmap> pics; // Will most likely not use
     private DataVM myVm;
+    private ConnectivityCheck myCheck;
 
-    public RecyclerViewAdapter(Context ctx, DataVM myVm, HashMap<String, String> petsAndImgs){
+    private final String URL_PREF_KEY = "url_preference";
+    private final String DEFAULT_URL = "https://www.pcs.cnu.edu/~kperkins/pets/";
+    private String link;
+
+    public RecyclerViewAdapter(Context ctx, DataVM myVm, ConnectivityCheck myCheck, HashMap<String, String> petsAndImgs){
         this.ctx = ctx;
         li = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.maxImgs = DEFAULT_MAX_IMGS;
         this.myVm = myVm;
+        this.myCheck = myCheck;
         this.petsAndImgs = petsAndImgs;
         this.petNames = new ArrayList<>(petsAndImgs.keySet());
         maxImgs = (petNames.size() > 0) ? petNames.size() : 1;
@@ -52,6 +61,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
         if (newPic){
             pics.add(pic);
         }
+    }
+
+    public void getPrefValues(SharedPreferences settings){
+        link = settings.getString(URL_PREF_KEY,DEFAULT_URL);
+        Log.d(TAG, link);
     }
 
     class ImgViewHolder extends RecyclerView.ViewHolder {
@@ -98,9 +112,24 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter {
 
         // Launch threads here to get image, should already have text
         // Get img info for thread
-        String imgName = petNames.get(position);
-        String imgFile = petsAndImgs.get(imgName);
-        myVm.getImage(imgFile, viewHolder, imgName);
+        if(!petsAndImgs.isEmpty()) {
+            Log.d(TAG, "onBindViewHolder: we have pets");
+            String imgName = petNames.get(position);
+            String imgFile = petsAndImgs.get(imgName);
+            myVm.getImage(imgFile, viewHolder, imgName);
+        }
+        else{
+            Log.d(TAG, "onBindViewHolder: ERROR no pets");
+            if ( !myCheck.isNetworkReachable() && !myCheck.isWiFiReachable() ){
+                viewHolder.iv.setImageResource(R.drawable.no_network);
+                viewHolder.tv.setText(R.string.no_connection_msg);
+            }
+            else {
+                int errorCode = myVm.getVmStatusCode();
+                viewHolder.tv.setText(String.format("Server returned %d", errorCode));
+            }
+
+        }
 
     }
 
